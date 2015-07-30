@@ -24,11 +24,9 @@
 // in such cases.   So we can't use basic_ostream<OStream::char_type> but rather
 // use two template parameters
 
-#include <boost/assert.hpp>
 #include <boost/config.hpp>
 #include <boost/serialization/pfto.hpp>
 #include <boost/detail/workaround.hpp>
-
 #include <boost/archive/detail/common_oarchive.hpp>
 #include <boost/serialization/string.hpp>
 
@@ -52,12 +50,19 @@ template<class Archive>
 class basic_text_oarchive : 
     public detail::common_oarchive<Archive>
 {
-protected:
-#if BOOST_WORKAROUND(__BORLANDC__,BOOST_TESTED_AT(0x560))
+#ifdef BOOST_NO_MEMBER_TEMPLATE_FRIENDS
 public:
 #else
-    friend class detail::interface_oarchive<Archive>;
+protected:
+    #if BOOST_WORKAROUND(BOOST_MSVC, < 1500)
+        // for some inexplicable reason insertion of "class" generates compile erro
+        // on msvc 7.1
+        friend detail::interface_oarchive<Archive>;
+    #else
+        friend class detail::interface_oarchive<Archive>;
+    #endif
 #endif
+
     enum {
         none,
         eol,

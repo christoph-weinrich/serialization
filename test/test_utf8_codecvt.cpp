@@ -89,11 +89,16 @@ unsigned char test_data<4>::utf8_encoding[] = {
     0xef, 0xbf, 0xbf,
     0xf0, 0x90, 0x80, 0x80,
     0xf4, 0x8f, 0xbf, 0xbf,
+    /* codecvt implementations for clang and gcc don't handle more than 21 bits and
+     * return eof accordlingly.  So don't test the whole 32 range
+     */
+    /*
     0xf7, 0xbf, 0xbf, 0xbf,
     0xf8, 0x88, 0x80, 0x80, 0x80,
     0xfb, 0xbf, 0xbf, 0xbf, 0xbf,
     0xfc, 0x84, 0x80, 0x80, 0x80, 0x80,
     0xfd, 0xbf, 0xbf, 0xbf, 0xbf, 0xbf
+    */
 };
 
 template<>
@@ -106,29 +111,35 @@ wchar_t test_data<4>::wchar_encoding[] = {
     (wchar_t)0x0000ffff,
     (wchar_t)0x00010000,
     (wchar_t)0x0010ffff,
+    /* codecvt implementations for clang and gcc don't handle more than 21 bits and
+     * return eof accordlingly.  So don't test the whole 32 range
+     */
+    /*
     (wchar_t)0x001fffff,
     (wchar_t)0x00200000,
     (wchar_t)0x03ffffff,
     (wchar_t)0x04000000,
     (wchar_t)0x7fffffff
+    */
 };
 
 int
 test_main(int /* argc */, char * /* argv */[]) {
-    std::locale old_loc;
     std::locale * utf8_locale
         = boost::archive::add_facet(
-            old_loc, 
+            std::locale::classic(),
             new boost::archive::detail::utf8_codecvt_facet
         );
 
     typedef char utf8_t;
+    // define test data compatible with the wchar_t implementation
+    // as either ucs-2 or ucs-4 depending on the compiler/library.
     typedef test_data<sizeof(wchar_t)> td;
 
     // Send our test UTF-8 data to file
     {
         std::ofstream ofs;
-        ofs.open("test.dat", std::ios::binary);
+        ofs.open("test.dat");
         std::copy(
             td::utf8_encoding,
             #if ! defined(__BORLANDC__)

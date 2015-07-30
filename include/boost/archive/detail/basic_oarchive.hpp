@@ -19,13 +19,11 @@
 #include <cstddef> // NULL
 #include <boost/config.hpp>
 #include <boost/noncopyable.hpp>
-
-// can't use this - much as I'd like to as borland doesn't support it
-// #include <boost/scoped_ptr.hpp>
+#include <boost/scoped_ptr.hpp>
 
 #include <boost/archive/basic_archive.hpp>
 #include <boost/serialization/tracking_enum.hpp>
-
+#include <boost/archive/detail/helper_collection.hpp>
 #include <boost/archive/detail/abi_prefix.hpp> // must be the last header
 
 namespace boost {
@@ -39,16 +37,16 @@ namespace detail {
 class basic_oarchive_impl;
 class BOOST_ARCHIVE_DECL(BOOST_PP_EMPTY()) basic_oserializer;
 class BOOST_ARCHIVE_DECL(BOOST_PP_EMPTY()) basic_pointer_oserializer;
+
 //////////////////////////////////////////////////////////////////////
 // class basic_oarchive - write serialized objects to an output stream
 class BOOST_ARCHIVE_OR_WARCHIVE_DECL(BOOST_PP_EMPTY()) basic_oarchive :
-    private boost::noncopyable
+    private boost::noncopyable,
+    public boost::archive::detail::helper_collection
 {
     friend class basic_oarchive_impl;
     // hide implementation of this class to minimize header conclusion
-    // in client code. note: borland can't use scoped_ptr
-    //boost::scoped_ptr<basic_oarchive_impl> pimpl;
-    basic_oarchive_impl * pimpl;
+    boost::scoped_ptr<basic_oarchive_impl> pimpl;
 
     // overload these to bracket object attributes. Used to implement
     // xml archives

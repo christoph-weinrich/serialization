@@ -8,6 +8,7 @@
   +-------------------------------------------------------------------------+*/
 
 #include <H5Gpublic.h>
+#include <H5Ppublic.h>
 #define BOOST_ARCHIVE_SOURCE
 #include <boost/serialization/throw_exception.hpp>
 #include <boost/archive/hdf5_archive_exception.hpp>

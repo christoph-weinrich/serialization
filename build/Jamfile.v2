@@ -99,7 +99,8 @@ for local v in HDF5_INCLUDE_PATH HDF5_LIB_PATH HDF5_BIN_PATH
     $(v) = [ modules.peek : $(v) ] ;
 }
 
-if $(HDF5_INCLUDE_PATH) && $(HDF5_LIB_PATH)
+# Always try to compile hdf5 serialization
+#if $(HDF5_INCLUDE_PATH) && $(HDF5_LIB_PATH)
 {
 	HDF5_INCLUDES = $(HDF5_INCLUDE_PATH) ;
 	HDF5_SOURCES =

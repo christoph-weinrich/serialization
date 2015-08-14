@@ -119,10 +119,12 @@ public:
         return boost::serialization::implementation_level< T >::value 
             >= boost::serialization::object_class_info;
     }
-    virtual bool tracking(const unsigned int /* flags */) const {
-        return boost::serialization::tracking_level< T >::value == boost::serialization::track_always
+    virtual bool tracking(const unsigned int flags) const {
+        return 
+			(flags & boost::archive::no_tracking) == 0  && 
+			(boost::serialization::tracking_level< T >::value == boost::serialization::track_always
             || (boost::serialization::tracking_level< T >::value == boost::serialization::track_selectively
-                && serialized_as_pointer());
+                && serialized_as_pointer()));
     }
     virtual version_type version() const {
         return version_type(::boost::serialization::version< T >::value);
